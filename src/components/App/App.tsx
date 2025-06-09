@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import toast, { Toaster } from "react-hot-toast";
 
 import SearchBar from "../SearchBar/SearchBar";
@@ -21,7 +21,7 @@ export default function App() {
     queryKey: ["movies", query, page],
     queryFn: () => fetchMovies({ query, page }),
     enabled: !!query,
-    placeholderData: (previousData) => previousData, 
+    placeholderData: keepPreviousData, 
   });
 
   const movies = data?.results ?? [];
