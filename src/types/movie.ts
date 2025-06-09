@@ -7,3 +7,9 @@ export interface Movie {
     release_date: string;
     vote_average: number;
 }
+
+  export interface TMDBResponse {
+    results: Movie[];
+    total_pages: number; 
+  }
+  
