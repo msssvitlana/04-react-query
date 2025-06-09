@@ -1,28 +1,27 @@
-import { useState } from "react";
-import { Toaster } from "react-hot-toast";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import toast, { Toaster } from "react-hot-toast";
+
 import SearchBar from "../SearchBar/SearchBar";
 import MovieGrid from "../MovieGrid/MovieGrid";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieModal from "../MovieModal/MovieModal";
-import fetchMovies from "../../services/movieService";
-import { useQuery } from "@tanstack/react-query";
 import PaginatedItems from "../ReactPaginate/ReactPaginate";
+
+import fetchMovies from "../../services/movieService";
 import type { Movie } from "../../types/movie";
-import type { TMDBResponse } from '../../types/movie';
 
 export default function App() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-
-  const { data, isLoading, isError } = useQuery<TMDBResponse, Error>({
-    queryKey: ['movies', query, page],
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["movies", query, page],
     queryFn: () => fetchMovies({ query, page }),
     enabled: !!query,
-    // keepPreviousData: true,
-    // onError: () => toast.error('Error fetching movies'),
+    placeholderData: (previousData) => previousData, 
   });
 
   const movies = data?.results ?? [];
@@ -30,8 +29,15 @@ export default function App() {
 
   function handleSearch(newQuery: string) {
     setQuery(newQuery);
-    setPage(1); // Скидаємо на першу сторінку при новому запиті
+    setPage(1);
   }
+
+
+  useEffect(() => {
+    if (!isLoading && !isError && query && movies.length === 0) {
+      toast.error("No movies found for your request.");
+    }
+  }, [isLoading, isError, query, movies]);
 
   return (
     <>
@@ -39,10 +45,6 @@ export default function App() {
 
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
-
-      {!isLoading && !isError && movies.length === 0 && query && (
-        <p>No movies found.</p>
-      )}
 
       {!isLoading && !isError && movies.length > 0 && (
         <>
@@ -58,7 +60,10 @@ export default function App() {
       )}
 
       {selectedMovie && (
-        <MovieModal movie={selectedMovie} onClose={() => setSelectedMovie(null)} />
+        <MovieModal
+          movie={selectedMovie}
+          onClose={() => setSelectedMovie(null)}
+        />
       )}
 
       <Toaster position="top-right" />

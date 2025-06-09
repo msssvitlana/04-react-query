@@ -1,12 +1,16 @@
 // fetchMovies 
 import axios from "axios";
-import { type TMDBResponse } from "../types/movie";
+import { type Movie } from "../types/movie";
 
 const BASE_URL = "https://api.themoviedb.org/3/search/movie";
 
 interface FetchMoviesParams {
   query: string;
   page: number;
+}
+export interface TMDBResponse {
+  results: Movie[];
+  total_pages: number; 
 }
 
 export default async function fetchMovies({ query, page }: FetchMoviesParams): Promise<TMDBResponse> {

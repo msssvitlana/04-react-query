@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import styles from "./SearchBar.module.css";
 
 interface SearchBarProps {
-  onSubmit: (query: string, page: number) => void;
+  onSubmit: (query: string) => void;
 }
 
 export default function SearchBar({ onSubmit }: SearchBarProps) {
@@ -14,7 +14,7 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
       toast.error("Please enter your search query.");
       return;
     }
-  onSubmit(value.trim(), 1)
+  onSubmit(value.trim())
 }
   return (
     <header className={styles.header}>
