@@ -8,7 +8,6 @@ interface MovieModalProps {
   onClose: () => void;
 }
 
-const modalRoot = document.getElementById("modal-root")!;
 
 export default function MovieModal({ movie, onClose }: MovieModalProps) {
   useEffect(() => {
